@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #17211b;
+  --color-moss: #446451;
+  --color-sage: #dce8dc;
+  --color-coral: #e46e52;
+  --color-paper: #f7f8f4;
+}
+
+@layer base {
+  :root { color: var(--color-ink); background: var(--color-paper); }
+  body { min-width: 320px; background: var(--color-paper); font-family: var(--font-sans); }
+  button, input, select { font: inherit; }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .fade-up { animation: fade-up 420ms ease-out both; }
+  .delay-1 { animation-delay: 80ms; }
+  .delay-2 { animation-delay: 160ms; }
+  .delay-3 { animation-delay: 240ms; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { scrollbar-width: none; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

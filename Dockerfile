@@ -8,6 +8,7 @@ RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
 COPY pyproject.toml README.md alembic.ini ./
 COPY src ./src
 COPY migrations ./migrations
+COPY web ./web
 RUN pip install ".[otel]"
 
 RUN useradd -r -u 10001 app && mkdir -p /app/data /models && chown -R app /app /models
