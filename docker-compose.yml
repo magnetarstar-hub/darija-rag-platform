@@ -25,6 +25,8 @@ services:
   worker:
     build: .
     command: ["rq", "worker", "-u", "redis://redis:6379/0", "ingest"]
+    healthcheck:
+      disable: true
     environment: *app-env
     depends_on: [api]
     volumes: [uploads:/app/data, hf-cache:/models]
@@ -55,7 +57,8 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    volumes: ["./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    volumes:
+      ["./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
     ports: ["9090:9090"]
 
   grafana:

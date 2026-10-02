@@ -1,6 +1,8 @@
 import time
+from pathlib import Path
 
 from fastapi import FastAPI, Request, Response
+from fastapi.staticfiles import StaticFiles
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from sqlalchemy import text
 
@@ -59,6 +61,11 @@ def create_app(settings: Settings | None = None, services: Services | None = Non
 
     for r in (routes_auth.router, routes_admin.router, routes_documents.router, routes_query.router):
         app.include_router(r)
+    web_dir = Path(__file__).resolve().parents[3] / "web"
+    if not web_dir.is_dir():
+        web_dir = Path.cwd() / "web"
+    if web_dir.is_dir():
+        app.mount("/", StaticFiles(directory=web_dir, html=True), name="web")
     setup_tracing(app, settings.otlp_endpoint)
     return app
 

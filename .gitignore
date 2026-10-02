@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 .venv/
 .env
+web/node_modules/
+npm-debug.log*
 .pytest_cache/
 .ruff_cache/
 .coverage

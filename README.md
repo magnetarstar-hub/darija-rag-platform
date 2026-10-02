@@ -85,6 +85,18 @@ uvicorn ragplatform.api.app:app_factory --factory --reload
 (First request downloads the embedding model, ~2 GB. For a download-free smoke run:
 `RAG_EMBEDDER=hash RAG_RERANKER=none`. It is lexical only, not for real use.)
 
+### Web UI
+
+The production frontend is served by the API at http://localhost:8000/ after the Tailwind assets are built:
+
+```bash
+cd web
+npm install
+npm run build
+```
+
+The UI supports sign-in, multilingual questions with citations, document status, and uploads for admins/editors.
+
 ### Try it
 
 ```bash
