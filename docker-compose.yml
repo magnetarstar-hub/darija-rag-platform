@@ -1,0 +1,71 @@
+x-app-env: &app-env
+  RAG_APP_ENV: prod
+  RAG_DATABASE_URL: postgresql+psycopg://rag:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/rag
+  RAG_REDIS_URL: redis://redis:6379/0
+  RAG_QUEUE_MODE: rq
+  RAG_QDRANT_URL: http://qdrant:6333
+  RAG_OLLAMA_URL: http://ollama:11434
+  RAG_LLM_MODEL: qwen2.5:7b-instruct
+  RAG_JWT_SECRET: ${RAG_JWT_SECRET:?set RAG_JWT_SECRET in .env (openssl rand -hex 32)}
+  RAG_BOOTSTRAP_TOKEN: ${RAG_BOOTSTRAP_TOKEN:-}
+  RAG_OTLP_ENDPOINT: http://jaeger:4317
+  RAG_UPLOAD_DIR: /app/data/uploads
+
+services:
+  api:
+    build: .
+    environment: *app-env
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_started }
+      qdrant: { condition: service_started }
+    volumes: [uploads:/app/data, hf-cache:/models]
+    ports: ["8000:8000"]
+
+  worker:
+    build: .
+    command: ["rq", "worker", "-u", "redis://redis:6379/0", "ingest"]
+    environment: *app-env
+    depends_on: [api]
+    volumes: [uploads:/app/data, hf-cache:/models]
+    deploy: { replicas: 2 }
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: rag
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: rag
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    volumes: [qdrant:/qdrant/storage]
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes: [ollama:/root/.ollama]
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes: ["./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes: ["./deploy/grafana/provisioning:/etc/grafana/provisioning:ro"]
+    ports: ["3000:3000"]
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment: { COLLECTOR_OTLP_ENABLED: "true" }
+    ports: ["16686:16686"]
+
+volumes: { uploads: {}, hf-cache: {}, pgdata: {}, qdrant: {}, ollama: {} }

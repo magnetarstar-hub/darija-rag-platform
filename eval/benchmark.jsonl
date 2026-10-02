@@ -1,0 +1,8 @@
+{"question": "Quelle est la date limite de dépôt du dossier d'inscription ?", "expected_source": "reglement_fr.md", "expected_keywords": ["15 juillet"]}
+{"question": "Quelles pièces faut-il fournir pour le dossier d'inscription ?", "expected_source": "reglement_fr.md", "expected_keywords": ["relevé de notes"]}
+{"question": "Quand peut-on passer l'examen de rattrapage ?", "expected_source": "reglement_fr.md", "expected_keywords": ["rattrapage"]}
+{"question": "Combien d'absences non justifiées entraînent l'exclusion du module ?", "expected_source": "reglement_fr.md", "expected_keywords": ["Trois absences"]}
+{"question": "ما هي الوثائق المطلوبة لملف التسجيل ؟", "expected_source": "reglement_ar.md", "expected_keywords": ["كشف النقاط"]}
+{"question": "متى تجرى دورة الاستدراك ؟", "expected_source": "reglement_ar.md", "expected_keywords": ["الاستدراك"]}
+{"question": "وين نودع ملف التسجيل ؟ لمصلحة التمدرس", "expected_source": "reglement_ar.md", "expected_keywords": ["مصلحة التمدرس"]}
+{"question": "kifach nwarri l'absence ta3i l'administration, wakteh l'dernier delai ?", "expected_source": "reglement_fr.md", "expected_keywords": ["72 heures"]}

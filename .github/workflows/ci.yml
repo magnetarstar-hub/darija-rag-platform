@@ -1,0 +1,26 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: Install (no torch: tests use the lexical hash embedder)
+        run: |
+          pip install -e . --no-deps
+          pip install fastapi "uvicorn[standard]" python-multipart pydantic pydantic-settings sqlalchemy alembic \
+            pyjwt prometheus-client httpx pypdf qdrant-client redis rq pytest pytest-cov ruff
+      - run: ruff check .
+      - run: pytest -q --cov=ragplatform --cov-fail-under=85
+      - name: Evaluation gate (retrieval smoke test)
+        run: RAG_EMBEDDER=hash RAG_RERANKER=none python eval/run_eval.py --min-recall 0.8
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t ragplatform:ci .
